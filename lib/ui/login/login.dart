@@ -1,59 +1,26 @@
-// ignore_for_file: deprecated_member_use
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_login1_and_register/main.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_login1_and_register/service/service.dart';
 
-class AddUser extends StatefulWidget {
-  const AddUser({Key? key}) : super(key: key);
+import '../register_user.dart/adduser.dart';
+
+class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
 
   @override
-  State<AddUser> createState() => _AddUserState();
+  State<Login> createState() => _LoginState();
 }
 
-class _AddUserState extends State<AddUser> {
-  TextEditingController user = TextEditingController();
+class _LoginState extends State<Login> {
+  TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
-
-  // function that will hel me to register a user
-  Future register() async {
-    var url = "http://192.168.71.1:8080/flutterApi/create.php";
-    var response = await http.post(Uri.parse(url), body: {
-      "email": user.text,
-      "password": pass.text,
-    });
-
-    var data = jsonDecode(response.body);
-    if (data == "Error") {
-      Fluttertoast.showToast(
-          msg: "This user Already Exit!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "User Successful Added!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
-  }
-
-// end of inserting data in database
+//Gettting method from service screens
+  Service loginService = Service();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Sign Up Page"),
+        title: const Text("Login Page"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -61,13 +28,13 @@ class _AddUserState extends State<AddUser> {
             Padding(
               padding: const EdgeInsets.only(top: 60.0),
               child: Center(
-                child: Container(
+                child: SizedBox(
                   width: 200,
                   height: 100,
                   /*decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
-                  child: Image.asset('assets/signup.png'),
+                  child: Image.asset('assets/login.png'),
                 ),
               ),
             ),
@@ -78,7 +45,7 @@ class _AddUserState extends State<AddUser> {
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                controller: user,
+                controller: email,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Email',
@@ -98,34 +65,44 @@ class _AddUserState extends State<AddUser> {
                     hintText: 'Enter secure password'),
               ),
             ),
-            const SizedBox(
-              height: 80,
+            TextButton(
+              onPressed: () {
+                //TODO FORGOT PASSWORD SCREEN GOES HERE
+              },
+              child: const Text(
+                'Forgot Password',
+                style: TextStyle(color: Colors.blue, fontSize: 15),
+              ),
             ),
             Container(
               height: 50,
               width: 250,
               decoration: BoxDecoration(
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-              child: FlatButton(
+              child: TextButton(
                 onPressed: () {
-                  register();
+                 // calling the method created
+                  loginService.loginMethod(context, email.text, pass.text);
                 },
                 child: const Text(
-                  'New User',
+                  'Loginn',
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
             ),
             const SizedBox(
-              height: 80,
+              height: 130,
             ),
-            FlatButton(
+            TextButton(
               onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => const Login()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const AddUser()));
               },
-              child: const Text("Back to Login"),
-            )
+              child: const Text(
+                'New User? Create Account',
+                style: TextStyle(color: Colors.blue, fontSize: 15),
+              ),
+            ),
           ],
         ),
       ),
